@@ -1,4 +1,0 @@
-time="2022-05-10T22:20:08+04:00" level=info msg="create router" func="main.main()" file="app.go:16"
-time="2022-05-10T22:20:08+04:00" level=info msg="register user handler" func="main.main()" file="app.go:19"
-time="2022-05-10T22:20:14+04:00" level=info msg="create router" func="main.main()" file="app.go:16"
-time="2022-05-10T22:20:14+04:00" level=info msg="register user handler" func="main.main()" file="app.go:19"
