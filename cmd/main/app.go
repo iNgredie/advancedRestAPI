@@ -3,7 +3,10 @@ package main
 import (
 	"advanced_rest_api/internal/config"
 	"advanced_rest_api/internal/user"
+	"advanced_rest_api/internal/user/db"
+	"advanced_rest_api/pkg/client/mongodb"
 	"advanced_rest_api/pkg/logging"
+	"context"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"net"
@@ -14,13 +17,23 @@ import (
 	"time"
 )
 
-
 func main() {
 	logger := logging.GetLogger()
 	logger.Info("create router")
 	router := httprouter.New()
 
 	cfg := config.GetConfig()
+
+	cfgMongo := cfg.MongoDB
+	mongoDBClient, err := mongodb.NewClient(context.Background(), cfgMongo.Host, cfgMongo.Port, cfgMongo.Username,
+		cfgMongo.Password, cfgMongo.Database, cfgMongo.AuthDB)
+	if err != nil {
+		panic(err)
+	}
+	storage := db.NewStorage(mongoDBClient, cfg.MongoDB.Collection, logger)
+
+
+	fmt.Println(storage)
 
 	logger.Info("register user handler")
 	handler := user.NewHandler(logger)
@@ -59,8 +72,8 @@ func start(router *httprouter.Router, cfg *config.Config) {
 	}
 
 	server := &http.Server{
-		Handler: router,
-		WriteTimeout: 15 * time.Second,
+		Handler:           router,
+		WriteTimeout:      15 * time.Second,
 		ReadHeaderTimeout: 15 * time.Second,
 	}
 
