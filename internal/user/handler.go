@@ -4,32 +4,28 @@ import (
 	"advanced_rest_api/internal/handlers"
 	"advanced_rest_api/pkg/logging"
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
 )
 
 var _ handlers.Handler = &handler{}
 
 const (
-	usersURL   = "/users"
-	userURL    = "/users/:uuid"
-	swaggerURL = "/swagger/*any"
+	usersURL = "/users"
+	userURL  = "/users/:uuid"
 )
 
 type handler struct {
 	logger *logging.Logger
 }
 
-func NewHandler(logger *logging.Logger) handlers.Handler {
+func NewUserHandler(logger *logging.Logger) handlers.Handler {
 	return &handler{
 		logger: logger,
 	}
 }
 
 func (h *handler) Register(router *gin.Engine) {
-	router.GET(swaggerURL, ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.GET(usersURL, h.GetList)
+	router.GET(usersURL, h.GetUsersList)
 	router.POST(usersURL, h.CreateUser)
 	router.GET(userURL, h.GetUserByUUID)
 	router.PUT(userURL, h.UpdateUser)
@@ -37,16 +33,7 @@ func (h *handler) Register(router *gin.Engine) {
 	router.DELETE(userURL, h.DeleteUser)
 }
 
-// GetList godoc
-// @Summary ping example
-// @Schemes
-// @Description do ping
-// @Tags example
-// @Accept json
-// @Produce json
-// @Success 200 {string} this is list of users
-// @Router /users [get]
-func (h *handler) GetList(c *gin.Context) {
+func (h *handler) GetUsersList(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, "this is list of users")
 }
 

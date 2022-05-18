@@ -2,6 +2,7 @@ package main
 
 import (
 	"advanced_rest_api/internal/config"
+	"advanced_rest_api/internal/posts"
 	"advanced_rest_api/internal/user"
 	"advanced_rest_api/internal/user/db"
 	"advanced_rest_api/pkg/client/mongodb"
@@ -35,8 +36,12 @@ func main() {
 	fmt.Println(storage)
 
 	logger.Info("register user handler")
-	handler := user.NewHandler(logger)
-	handler.Register(router)
+	userHandler := user.NewUserHandler(logger)
+	userHandler.Register(router)
+
+	logger.Info("register posts handler")
+	postHandler := posts.NewPostsHandler(logger)
+	postHandler.Register(router)
 
 	start(router, cfg)
 }
