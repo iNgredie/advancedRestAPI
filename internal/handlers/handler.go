@@ -1,7 +1,9 @@
 package handlers
 
-import "github.com/julienschmidt/httprouter"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 type Handler interface {
-	Register(router *httprouter.Router)
+	Register(router *gin.Engine)
 }

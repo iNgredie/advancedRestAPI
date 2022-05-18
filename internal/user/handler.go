@@ -1,18 +1,20 @@
 package user
 
 import (
-	"advanced_rest_api/internal/apperror"
 	"advanced_rest_api/internal/handlers"
 	"advanced_rest_api/pkg/logging"
-	"github.com/julienschmidt/httprouter"
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
 )
 
 var _ handlers.Handler = &handler{}
 
 const (
-	usersURL = "/users"
-	userURL  = "/users/:uuid"
+	usersURL   = "/users"
+	userURL    = "/users/:uuid"
+	swaggerURL = "/swagger/*any"
 )
 
 type handler struct {
@@ -25,53 +27,45 @@ func NewHandler(logger *logging.Logger) handlers.Handler {
 	}
 }
 
-func (h *handler) Register(router *httprouter.Router) {
-	router.HandlerFunc(http.MethodGet, usersURL, apperror.Middleware(h.GetList))
-	router.HandlerFunc(http.MethodPost, usersURL, apperror.Middleware(h.CreateUser))
-	router.HandlerFunc(http.MethodGet, userURL, apperror.Middleware(h.GetUserByUUID))
-	router.HandlerFunc(http.MethodPut, userURL, apperror.Middleware(h.UpdateUser))
-	router.HandlerFunc(http.MethodPatch, userURL, apperror.Middleware(h.PartiallyUpdateUser))
-	router.HandlerFunc(http.MethodDelete, userURL, apperror.Middleware(h.DeleteUser))
+func (h *handler) Register(router *gin.Engine) {
+	router.GET(swaggerURL, ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.GET(usersURL, h.GetList)
+	router.POST(usersURL, h.CreateUser)
+	router.GET(userURL, h.GetUserByUUID)
+	router.PUT(userURL, h.UpdateUser)
+	router.PATCH(userURL, h.PartiallyUpdateUser)
+	router.DELETE(userURL, h.DeleteUser)
 }
 
-func (h *handler) GetList(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(200)
-	w.Write([]byte("this is list of users"))
-
-	return nil
+// GetList godoc
+// @Summary ping example
+// @Schemes
+// @Description do ping
+// @Tags example
+// @Accept json
+// @Produce json
+// @Success 200 {string} this is list of users
+// @Router /users [get]
+func (h *handler) GetList(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, "this is list of users")
 }
 
-func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(201)
-	w.Write([]byte("this is create user"))
-
-	return nil
+func (h *handler) CreateUser(c *gin.Context) {
+	c.IndentedJSON(http.StatusCreated, "this is create user")
 }
 
-func (h *handler) GetUserByUUID(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(200)
-	w.Write([]byte("this is user by uuid"))
-
-	return nil
+func (h *handler) GetUserByUUID(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, "this is user by uuid")
 }
 
-func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(204)
-	w.Write([]byte("this is update user"))
-
-	return nil
+func (h *handler) UpdateUser(c *gin.Context) {
+	c.IndentedJSON(http.StatusNoContent, "this is update user")
 }
 
-func (h *handler) PartiallyUpdateUser(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(204)
-	w.Write([]byte("this is partially update user"))
-
-	return nil
+func (h *handler) PartiallyUpdateUser(c *gin.Context) {
+	c.IndentedJSON(http.StatusNoContent, "this is partially update user")
 }
 
-func (h *handler) DeleteUser(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(204)
-	w.Write([]byte("this is delete user"))
-
-	return nil
+func (h *handler) DeleteUser(c *gin.Context) {
+	c.IndentedJSON(http.StatusNoContent, "his is delete user")
 }

@@ -8,7 +8,7 @@ import (
 	"advanced_rest_api/pkg/logging"
 	"context"
 	"fmt"
-	"github.com/julienschmidt/httprouter"
+	"github.com/gin-gonic/gin"
 	"net"
 	"net/http"
 	"os"
@@ -20,7 +20,7 @@ import (
 func main() {
 	logger := logging.GetLogger()
 	logger.Info("create router")
-	router := httprouter.New()
+	router := gin.Default()
 
 	cfg := config.GetConfig()
 
@@ -32,7 +32,6 @@ func main() {
 	}
 	storage := db.NewStorage(mongoDBClient, cfg.MongoDB.Collection, logger)
 
-
 	fmt.Println(storage)
 
 	logger.Info("register user handler")
@@ -42,7 +41,7 @@ func main() {
 	start(router, cfg)
 }
 
-func start(router *httprouter.Router, cfg *config.Config) {
+func start(router *gin.Engine, cfg *config.Config) {
 	logger := logging.GetLogger()
 	logger.Info("start application")
 
